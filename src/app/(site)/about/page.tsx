@@ -29,8 +29,8 @@ export default function AboutPage() {
             </div>
             <div className="bg-sage/20 rounded-2xl p-2">
               <img
-                src="https://lh3.googleusercontent.com/sitesv/AA5AbUAhB_mvAdcaFL7E3tVSVAsAVAIjG_xW5WLx3LishUirg0pvUYyIex6cPC123OJS-qRV-iOHxHbkkexOVOEtJn_CPymgTd74xzyQiE21W-7iq9fMP2egwBQlWvc9u-r5pPc4gNnyTH9TUL6kF_ETESBZrGl4uTyu0-GlGe0sYuAJ6sWAs3L-SRd5Cwvhx2-msOUMYh2PfcKh2enriTRSIKkUNTGIwpsK0AA_h0w=w1280"
-                alt="Apple Hill Tennis Club history"
+                src="/images/mountain-landscape.jpg"
+                alt="Green Mountain landscape"
                 className="rounded-xl w-full h-72 md:h-96 object-cover"
               />
             </div>
@@ -44,8 +44,8 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1 bg-sage/20 rounded-2xl p-2">
               <img
-                src="https://lh3.googleusercontent.com/sitesv/AA5AbUA2nJNB6rn507Ip0ba2pyFMlIxjUeaGrfReNX2fg5_8YbLjR7yPSoXwIwT6TgIRvDvXPy4jMZwz015D7D166FNfow_gLJ2nM0Ll_Y9RA7H4z-enlMjZPvg_1ivLpi721Q-m2yIQ5XnEKFPTbQTnV0_xVsDowSGcQGGg0Rs1KIW5JLIWOspTOoJRmnN6NhMMYwcoT3zCbmzOzPhVyXJKDfml0ZxfS5ciTA=w1280"
-                alt="Apple Hill Tennis Club facilities"
+                src="/images/tennis-clay.jpg"
+                alt="Red clay tennis courts"
                 className="rounded-xl w-full h-72 md:h-96 object-cover"
               />
             </div>
@@ -76,7 +76,7 @@ export default function AboutPage() {
           </p>
           <div className="rounded-2xl overflow-hidden shadow-lg">
             <iframe
-              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2900!2d${about.location.coordinates.lng}!3d${about.location.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDU4JzI3LjgiTiA3MsKwNTMnMzIuOSJX!5e0!3m2!1sen!2sus!4v1690000000000`}
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5800!2d-72.894472!3d42.974389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e3b1d2c3b4e5f6%3A0x0!2zQXBwbGUgSGlsbCBMbiwgV2VzdCBEb3ZlciwgVlQ!5e0!3m2!1sen!2sus!4v1700000000000"
               width="100%"
               height="400"
               style={{ border: 0 }}

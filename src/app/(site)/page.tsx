@@ -51,7 +51,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30"
           style={{
-            backgroundImage: `url('https://lh3.googleusercontent.com/sitesv/AA5AbUAhB_mvAdcaFL7E3tVSVAsAVAIjG_xW5WLx3LishUirg0pvUYyIex6cPC123OJS-qRV-iOHxHbkkexOVOEtJn_CPymgTd74xzyQiE21W-7iq9fMP2egwBQlWvc9u-r5pPc4gNnyTH9TUL6kF_ETESBZrGl4uTyu0-GlGe0sYuAJ6sWAs3L-SRd5Cwvhx2-msOUMYh2PfcKh2enriTRSIKkUNTGIwpsK0AA_h0w=w1280')`,
+            backgroundImage: `url('/images/vt-green-mountains.jpg')`,
           }}
         />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 md:py-36 text-center">
@@ -102,8 +102,8 @@ export default function Home() {
             <div className="relative">
               <div className="bg-sage/20 rounded-2xl p-2">
                 <img
-                  src="https://lh3.googleusercontent.com/sitesv/AA5AbUA2nJNB6rn507Ip0ba2pyFMlIxjUeaGrfReNX2fg5_8YbLjR7yPSoXwIwT6TgIRvDvXPy4jMZwz015D7D166FNfow_gLJ2nM0Ll_Y9RA7H4z-enlMjZPvg_1ivLpi721Q-m2yIQ5XnEKFPTbQTnV0_xVsDowSGcQGGg0Rs1KIW5JLIWOspTOoJRmnN6NhMMYwcoT3zCbmzOzPhVyXJKDfml0ZxfS5ciTA=w1280"
-                  alt="Apple Hill Tennis Club courts"
+                  src="/images/tennis-clay.jpg"
+                  alt="Red clay tennis courts"
                   className="rounded-xl w-full h-72 md:h-96 object-cover"
                 />
               </div>
