@@ -1,0 +1,135 @@
+{
+  "site": {
+    "name": "Apple Hill Tennis Club",
+    "tagline": "Nestled in the Green Mountains of West Dover, Vermont"
+  },
+  "home": {
+    "hero": {
+      "heading": "Apple Hill Tennis Club",
+      "subheading": "Nestled in the Green Mountains of West Dover, Vermont",
+      "description": "We are a member-run club of tennis lovers, nestled in the Green Mountains of West Dover, VT. We welcome new members — both local residents and visitors.",
+      "image": "/images/hero-courts.jpg"
+    },
+    "welcome": {
+      "heading": "Welcome to Apple Hill",
+      "text": "Whether you're a year-round Vermonter or visiting the Mount Snow area for the season, there is always a place for you at Apple Hill in our welcoming community. Come enjoy our beautiful red clay courts surrounded by the stunning Green Mountain landscape.",
+      "image": "/images/clubhouse.jpg"
+    },
+    "highlights": [
+      {
+        "title": "Two Red Clay Courts",
+        "description": "Play on beautifully maintained red clay courts with mountain views.",
+        "icon": "court"
+      },
+      {
+        "title": "Memorial Day to October",
+        "description": "Our season typically runs from Memorial Day weekend through mid-October, weather permitting.",
+        "icon": "calendar"
+      },
+      {
+        "title": "Community & Friends",
+        "description": "A member-run club established 25 years ago as a place to enjoy tennis with friends.",
+        "icon": "community"
+      }
+    ]
+  },
+  "about": {
+    "hero": {
+      "heading": "About Our Club",
+      "image": "/images/about-hero.jpg"
+    },
+    "history": {
+      "heading": "Our Story",
+      "text": "Apple Hill Tennis Club was established 25 years ago as a place to enjoy tennis with friends. That founding principle continues to define our community today. What began as a small group of tennis enthusiasts has grown into a vibrant club that welcomes players of all levels.",
+      "image": "/images/history.jpg"
+    },
+    "facilities": {
+      "heading": "Our Facilities",
+      "text": "The club features two beautifully maintained red clay courts and a small clubhouse perfect for socializing before and after play. Nestled off Upper Handle Road and Apple Hill Lane near Mount Snow, our courts offer a serene setting surrounded by the beauty of the Green Mountains.",
+      "image": "/images/facilities.jpg"
+    },
+    "season": {
+      "heading": "Playing Season",
+      "text": "Our season typically opens around Memorial Day weekend and runs through mid-October, depending on weather conditions. The Vermont summer provides ideal playing conditions with cool mountain breezes and long, beautiful days on the court."
+    },
+    "location": {
+      "heading": "Find Us",
+      "address": "Apple Hill Lane, West Dover, VT",
+      "description": "Located off Upper Handle Road and Apple Hill Lane at Mount Snow in West Dover, Vermont.",
+      "mapUrl": "https://maps.app.goo.gl/S8TKd9fyWQCkZ42M8",
+      "coordinates": {
+        "lat": 42.974389,
+        "lng": -72.892472
+      }
+    }
+  },
+  "membership": {
+    "hero": {
+      "heading": "Join Our Club",
+      "description": "We welcome new members to join our club! There are a variety of ways to participate in Apple Hill.",
+      "image": "/images/membership-hero.jpg"
+    },
+    "plans": [
+      {
+        "name": "Single Membership",
+        "price": "$250",
+        "period": "annually",
+        "features": [
+          "Full season access",
+          "Two red clay courts",
+          "Clubhouse privileges",
+          "Community events"
+        ]
+      },
+      {
+        "name": "Couples Membership",
+        "price": "$450",
+        "period": "annually",
+        "features": [
+          "Two memberships in one",
+          "Full season access",
+          "Two red clay courts",
+          "Clubhouse privileges",
+          "Community events"
+        ],
+        "popular": true
+      },
+      {
+        "name": "Monthly Membership",
+        "price": "$175",
+        "period": "per month",
+        "features": [
+          "Flexible commitment",
+          "Full court access",
+          "Clubhouse privileges",
+          "Great for visitors"
+        ]
+      }
+    ],
+    "guestFee": {
+      "price": "$15",
+      "description": "per person per visit"
+    },
+    "contact": {
+      "heading": "Ready to Join?",
+      "text": "For membership inquiries and payment options, please contact us.",
+      "contacts": [
+        {
+          "name": "Gwynne Fitzgerald",
+          "role": "Membership",
+          "email": "gwynne_e@yahoo.com"
+        },
+        {
+          "name": "Wendy Clark",
+          "role": "General Inquiries",
+          "email": "wendyclark8367@gmail.com"
+        }
+      ]
+    }
+  },
+  "footer": {
+    "email": "wendyclark8367@gmail.com",
+    "location": "West Dover, Vermont",
+    "tagline": "A member-run club of tennis lovers in the Green Mountains."
+  }
+}
