@@ -11,8 +11,12 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-forest text-white py-16 md:py-24 text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      <section className="relative bg-forest text-white overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-40"
+          style={{ backgroundImage: `url('/images/green-mountains-2.jpg')` }}
+        />
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-20 md:py-28 text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
             {about.hero.heading}
           </h1>
@@ -29,8 +33,8 @@ export default function AboutPage() {
             </div>
             <div className="bg-sage/20 rounded-2xl p-2">
               <img
-                src="/images/mountain-landscape.jpg"
-                alt="Green Mountain landscape"
+                src="/images/apple-hill-courts.png"
+                alt="Apple Hill Tennis Club courts"
                 className="rounded-xl w-full h-72 md:h-96 object-cover"
               />
             </div>

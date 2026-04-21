@@ -49,9 +49,9 @@ export default function Home() {
       {/* Hero */}
       <section className="relative bg-forest text-white overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-40"
           style={{
-            backgroundImage: `url('/images/vt-green-mountains.jpg')`,
+            backgroundImage: `url('/images/green-mountains-2.jpg')`,
           }}
         />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 md:py-36 text-center">
@@ -102,8 +102,8 @@ export default function Home() {
             <div className="relative">
               <div className="bg-sage/20 rounded-2xl p-2">
                 <img
-                  src="/images/tennis-clay.jpg"
-                  alt="Red clay tennis courts"
+                  src="/images/apple-hill-courts.png"
+                  alt="Apple Hill Tennis Club courts"
                   className="rounded-xl w-full h-72 md:h-96 object-cover"
                 />
               </div>
