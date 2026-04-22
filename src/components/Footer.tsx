@@ -22,8 +22,19 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="border-t border-white/20 mt-8 pt-6 text-center text-xs text-sage-light">
-          &copy; {new Date().getFullYear()} Apple Hill Tennis Club. All rights reserved.
+        <div className="border-t border-white/20 mt-8 pt-6 text-center text-xs text-sage-light space-y-1">
+          <p>&copy; {new Date().getFullYear()} Apple Hill Tennis Club. All rights reserved.</p>
+          <p>
+            Built by{" "}
+            <a
+              href="https://polarispoint.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-white transition-colors"
+            >
+              Polaris Point
+            </a>
+          </p>
         </div>
       </div>
     </footer>
