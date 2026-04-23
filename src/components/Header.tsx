@@ -31,6 +31,9 @@ export default function Header() {
             <Link href="/membership" className="hover:text-sage-light transition-colors text-sm uppercase tracking-wider">
               Membership
             </Link>
+            <Link href="/blog" className="hover:text-sage-light transition-colors text-sm uppercase tracking-wider">
+              Blog
+            </Link>
             <Link
               href="/membership#contact"
               className="bg-clay hover:bg-clay-light text-white px-4 py-2 rounded-md text-sm uppercase tracking-wider transition-colors"
@@ -66,6 +69,9 @@ export default function Header() {
             </Link>
             <Link href="/membership" onClick={() => setMenuOpen(false)} className="hover:text-sage-light transition-colors text-sm uppercase tracking-wider">
               Membership
+            </Link>
+            <Link href="/blog" onClick={() => setMenuOpen(false)} className="hover:text-sage-light transition-colors text-sm uppercase tracking-wider">
+              Blog
             </Link>
             <Link
               href="/membership#contact"

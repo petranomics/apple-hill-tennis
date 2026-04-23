@@ -127,6 +127,22 @@
       ]
     }
   },
+  "blog": {
+    "title": "Blog",
+    "description": "News, stories, and updates from Apple Hill Tennis Club in southern Vermont.",
+    "posts": [
+      {
+        "slug": "history-of-apple-hill-tennis-club",
+        "title": "The History of Apple Hill Tennis Club: 25 Years of Southern Vermont Tennis",
+        "excerpt": "How a small group of tennis lovers in the Green Mountains built one of southern Vermont's most beloved clay court clubs.",
+        "date": "2026-04-23",
+        "author": "Apple Hill Tennis Club",
+        "image": "/images/apple-hill-sign.jpg",
+        "tags": ["history", "southern vermont tennis", "clay courts", "west dover"],
+        "content": "For over two decades, Apple Hill Tennis Club has been a cornerstone of the southern Vermont tennis community. Tucked away off Apple Hill Lane in West Dover — just minutes from Mount Snow — our club has quietly grown into one of the most cherished places to play tennis in the Green Mountains.\n\n## How It All Began\n\nApple Hill Tennis Club was founded approximately 25 years ago by a small group of tennis enthusiasts who shared a simple vision: a place to enjoy the sport they loved, surrounded by friends and the beauty of the Vermont landscape. What started as an informal gathering of players on a private court evolved into a proper member-run club with two beautifully maintained red clay courts.\n\nIn those early days, the founders chose red clay as the playing surface — a decision that set Apple Hill apart from many other courts in the region. Clay courts are gentler on the body, encourage longer rallies, and reward strategic play. For the tennis community in southern Vermont, Apple Hill became the go-to destination for clay court tennis.\n\n## A Community Tennis Club in the Green Mountains\n\nUnlike large commercial tennis facilities, Apple Hill has always been member-run. There are no paid staff or elaborate facilities — just two excellent courts, a small clubhouse for socializing, and a community of people who genuinely enjoy each other's company. This grassroots approach is what makes playing tennis at Apple Hill feel different from anywhere else in the Deerfield Valley.\n\nOver the years, the club has attracted a diverse mix of members: year-round Vermonters, seasonal residents with homes near Mount Snow, and visitors who discover the club while vacationing in the West Dover area. Whether you are an experienced player or just picking up a racquet, Apple Hill welcomes you.\n\n## Southern Vermont's Best-Kept Secret\n\nThe Mount Snow and West Dover area is known for skiing, hiking, and fall foliage — but tennis has a long tradition here too. Apple Hill Tennis Club has been a key part of the southern Vermont tennis scene, offering a seasonal playing experience that runs from Memorial Day weekend through mid-October.\n\nThe setting is hard to beat. Surrounded by the rolling peaks of the Green Mountains, players enjoy cool mountain breezes, stunning views, and the satisfying feel of red clay underfoot. It is tennis the way it was meant to be played — outdoors, in nature, with good company.\n\n## Looking Ahead\n\nAs we look to the future, Apple Hill Tennis Club remains committed to the values that have sustained us for a quarter century: community, accessibility, and a love of the game. We continue to welcome new members — whether you are a local resident, a Mount Snow regular, or simply someone who wants to experience southern Vermont tennis at its finest.\n\nIf you have never visited Apple Hill, we invite you to come see what makes this place so special. Our courts are waiting, and there is always room for one more.\n\n---\n\n*Interested in joining? Visit our [membership page](/membership) or contact us to learn more about playing tennis in West Dover, Vermont.*"
+      }
+    ]
+  },
   "footer": {
     "email": "wendyclark8367@gmail.com",
     "location": "West Dover, Vermont",
