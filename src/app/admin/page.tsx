@@ -138,23 +138,153 @@ function TextArea({ value, onChange, rows = 4 }: { value: string; onChange: (v: 
 }
 
 function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [library, setLibrary] = useState<{ url: string; pathname: string }[]>([]);
+  const [loadingLib, setLoadingLib] = useState(false);
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (data.url) onChange(data.url);
+    } catch (e) {
+      console.error("Upload failed", e);
+    }
+    setUploading(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) upload(file);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) upload(file);
+    e.target.value = "";
+  };
+
+  const openLibrary = async () => {
+    setShowLibrary(true);
+    setLoadingLib(true);
+    try {
+      const res = await fetch("/api/upload");
+      const data = await res.json();
+      setLibrary(data.images || []);
+    } catch {
+      setLibrary([]);
+    }
+    setLoadingLib(false);
+  };
+
   return (
     <div className="space-y-2">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="/images/example.jpg"
-        className="w-full border border-sage/30 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-forest/30"
-      />
+      {/* Current value / URL input */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="/images/example.jpg or upload below"
+          className="flex-1 border border-sage/30 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-forest/30"
+        />
+        {value && (
+          <button
+            onClick={() => onChange("")}
+            className="text-bark-light hover:text-red-600 px-2 text-sm transition-colors"
+            title="Clear image"
+          >
+            &times;
+          </button>
+        )}
+      </div>
+
+      {/* Preview */}
       {value && (
         <div className="bg-sage/10 rounded-lg p-2 inline-block">
           <img
             src={value}
             alt="Preview"
-            className="rounded-md max-h-40 object-cover"
+            className="rounded-md max-h-44 object-cover"
             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
           />
+        </div>
+      )}
+
+      {/* Upload area */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          dragOver ? "border-forest bg-forest/5" : "border-sage/30 hover:border-sage/50"
+        }`}
+      >
+        {uploading ? (
+          <p className="text-sm text-bark-light animate-pulse">Uploading...</p>
+        ) : (
+          <>
+            <svg className="w-8 h-8 text-sage mx-auto mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <p className="text-sm text-bark-light mb-2">
+              Drag & drop an image here
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <label className="cursor-pointer bg-forest hover:bg-forest-light text-white text-xs font-semibold px-4 py-2 rounded-md transition-colors">
+                Choose File
+                <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+              </label>
+              <button
+                type="button"
+                onClick={openLibrary}
+                className="text-xs font-semibold text-forest border border-forest/30 hover:bg-forest/5 px-4 py-2 rounded-md transition-colors"
+              >
+                Image Library
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Image library modal */}
+      {showLibrary && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40" onClick={() => setShowLibrary(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-sage/20">
+              <h3 className="text-lg font-bold text-forest">Image Library</h3>
+              <button onClick={() => setShowLibrary(false)} className="text-bark-light hover:text-bark text-xl">&times;</button>
+            </div>
+            <div className="p-5 overflow-y-auto max-h-[60vh]">
+              {loadingLib ? (
+                <p className="text-center text-bark-light animate-pulse py-8">Loading images...</p>
+              ) : library.length === 0 ? (
+                <p className="text-center text-bark-light py-8">No uploaded images yet. Upload one above!</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-3">
+                  {library.map((img) => (
+                    <button
+                      key={img.url}
+                      onClick={() => { onChange(img.url); setShowLibrary(false); }}
+                      className={`relative rounded-lg overflow-hidden border-2 transition-colors hover:border-forest ${
+                        value === img.url ? "border-forest" : "border-transparent"
+                      }`}
+                    >
+                      <img src={img.url} alt={img.pathname} className="w-full h-28 object-cover" />
+                      <p className="text-[10px] text-bark-light p-1 truncate">{img.pathname.replace("images/", "")}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
