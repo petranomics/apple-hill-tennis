@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile } from "fs/promises";
-import { join } from "path";
+import { revalidatePath } from "next/cache";
+import { getContent, saveContent } from "@/lib/content";
 
-const CONTENT_PATH = join(process.cwd(), "src/data/content.json");
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const raw = await readFile(CONTENT_PATH, "utf-8");
-  return NextResponse.json(JSON.parse(raw));
+  const content = await getContent();
+  return NextResponse.json(content);
 }
 
 export async function PUT(req: NextRequest) {
   const body = await req.json();
-  await writeFile(CONTENT_PATH, JSON.stringify(body, null, 2), "utf-8");
+  await saveContent(body);
+
+  // Revalidate all pages so changes appear immediately
+  revalidatePath("/", "layout");
+
   return NextResponse.json({ success: true });
 }

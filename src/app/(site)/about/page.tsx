@@ -1,11 +1,15 @@
-import content from "@/data/content.json";
+import { getContent } from "@/lib/content";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
   title: "About | Apple Hill Tennis Club",
   description: "Learn about our history, facilities, and location in West Dover, Vermont.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const content = await getContent();
   const { about } = content;
 
   return (

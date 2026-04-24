@@ -1,6 +1,8 @@
 import Link from "next/link";
-import content from "@/data/content.json";
+import { getContent } from "@/lib/content";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Blog | Apple Hill Tennis Club",
@@ -16,7 +18,8 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const content = await getContent();
   const { blog } = content;
 
   return (

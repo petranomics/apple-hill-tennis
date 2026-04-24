@@ -1,11 +1,15 @@
-import content from "@/data/content.json";
+import { getContent } from "@/lib/content";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
   title: "Membership | Apple Hill Tennis Club",
   description: "Join Apple Hill Tennis Club. Single, couples, and monthly memberships available.",
 };
 
-export default function MembershipPage() {
+export default async function MembershipPage() {
+  const content = await getContent();
   const { membership } = content;
 
   return (

@@ -1,5 +1,7 @@
 import Link from "next/link";
-import content from "@/data/content.json";
+import { getContent } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
 
 function CourtIcon() {
   return (
@@ -41,7 +43,8 @@ const iconMap: Record<string, () => React.JSX.Element> = {
   community: CommunityIcon,
 };
 
-export default function Home() {
+export default async function Home() {
+  const content = await getContent();
   const { home } = content;
 
   return (

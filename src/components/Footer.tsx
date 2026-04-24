@@ -1,6 +1,7 @@
-import content from "@/data/content.json";
+import { getContent } from "@/lib/content";
 
-export default function Footer() {
+export default async function Footer() {
+  const content = await getContent();
   const { footer } = content;
 
   return (

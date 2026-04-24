@@ -1,18 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import content from "@/data/content.json";
+import { getContent } from "@/lib/content";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  return content.blog.posts.map((post) => ({ slug: post.slug }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const content = await getContent();
   const post = content.blog.posts.find((p) => p.slug === slug);
   if (!post) return {};
 
@@ -33,6 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
+  const content = await getContent();
   const post = content.blog.posts.find((p) => p.slug === slug);
 
   if (!post) notFound();
@@ -108,11 +108,8 @@ export default async function BlogPostPage({ params }: Props) {
 }
 
 function MarkdownContent({ content: md }: { content: string }) {
-  // Simple markdown-to-HTML for blog posts
   const html = md
-    // Horizontal rules
     .replace(/^---$/gm, '<hr class="my-8 border-sage/30" />')
-    // Headings
     .replace(
       /^## (.+)$/gm,
       '<h2 class="text-2xl font-bold text-forest mt-10 mb-4">$1</h2>'
@@ -121,15 +118,12 @@ function MarkdownContent({ content: md }: { content: string }) {
       /^### (.+)$/gm,
       '<h3 class="text-xl font-bold text-forest mt-8 mb-3">$1</h3>'
     )
-    // Bold and italic
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    // Links
     .replace(
       /\[(.+?)\]\((.+?)\)/g,
       '<a href="$2" class="text-clay hover:text-clay-light underline underline-offset-2 transition-colors">$1</a>'
     )
-    // Paragraphs (double newline)
     .split(/\n\n/)
     .map((block) => {
       if (
