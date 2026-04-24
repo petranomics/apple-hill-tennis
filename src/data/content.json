@@ -118,11 +118,6 @@
           "name": "Gwynne Fitzgerald",
           "role": "Membership",
           "email": "gwynne_e@yahoo.com"
-        },
-        {
-          "name": "Wendy Clark",
-          "role": "General Inquiries",
-          "email": "wendyclark8367@gmail.com"
         }
       ]
     }
@@ -144,7 +139,7 @@
     ]
   },
   "footer": {
-    "email": "wendyclark8367@gmail.com",
+    "email": "gwynne_e@yahoo.com",
     "location": "West Dover, Vermont",
     "tagline": "A member-run club of tennis lovers in the Green Mountains."
   }
