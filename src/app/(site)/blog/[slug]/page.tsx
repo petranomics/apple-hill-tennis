@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContent } from "@/lib/content";
+import PostGallery, { type GalleryPhoto } from "@/components/PostGallery";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -66,6 +67,11 @@ export default async function BlogPostPage({ params }: Props) {
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
             {post.title}
           </h1>
+          {post.excerpt && (
+            <p className="mt-5 text-lg md:text-xl text-white/85 max-w-2xl mx-auto leading-relaxed">
+              {post.excerpt}
+            </p>
+          )}
         </div>
       </section>
 
@@ -107,45 +113,64 @@ export default async function BlogPostPage({ params }: Props) {
   );
 }
 
-function MarkdownContent({ content: md }: { content: string }) {
-  const html = md
-    .replace(/^---$/gm, '<hr class="my-8 border-sage/30" />')
-    .replace(
-      /^## (.+)$/gm,
-      '<h2 class="text-2xl font-bold text-forest mt-10 mb-4">$1</h2>'
-    )
-    .replace(
-      /^### (.+)$/gm,
-      '<h3 class="text-xl font-bold text-forest mt-8 mb-3">$1</h3>'
-    )
-    // Images must be handled before links, or the link rule consumes ![...](...)
-    .replace(/!\[(.*?)\]\((.+?)\)/g, (_m, caption: string, url: string) => {
-      const cap = caption.trim();
-      return `<figure class="my-10"><img src="${url}" alt="${cap}" loading="lazy" class="rounded-xl w-full h-auto shadow-sm" />${
-        cap
-          ? `<figcaption class="mt-3 text-center text-sm text-bark-light italic">${cap}</figcaption>`
-          : ""
-      }</figure>`;
-    })
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(
-      /\[(.+?)\]\((.+?)\)/g,
-      '<a href="$2" class="text-clay hover:text-clay-light underline underline-offset-2 transition-colors">$1</a>'
-    )
-    .split(/\n\n/)
-    .map((block) => {
-      if (
-        block.startsWith("<h") ||
-        block.startsWith("<hr") ||
-        block.startsWith("<ul") ||
-        block.startsWith("<ol") ||
-        block.startsWith("<figure")
-      )
-        return block;
-      return `<p class="mb-6 text-bark-light leading-relaxed">${block}</p>`;
-    })
-    .join("\n");
+const IMAGE_BLOCK = /^!\[(.*?)\]\((.+?)\)$/;
 
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+/**
+ * Renders the post body. Photos are pulled out of the markdown and handed to the
+ * gallery component; a run of consecutive photos becomes one gallery rather than
+ * a stack of full-width images, which is how club photo posts actually read.
+ */
+function MarkdownContent({ content: md }: { content: string }) {
+  const blocks = md.split(/\n\n+/).map((b) => b.trim()).filter(Boolean);
+
+  // Group the blocks into text runs and photo runs, preserving order.
+  const nodes: ({ kind: "text"; blocks: string[] } | { kind: "photos"; photos: GalleryPhoto[] })[] = [];
+
+  for (const block of blocks) {
+    const match = block.match(IMAGE_BLOCK);
+    const last = nodes[nodes.length - 1];
+
+    if (match) {
+      const photo = { url: match[2], caption: match[1].trim() };
+      if (last?.kind === "photos") last.photos.push(photo);
+      else nodes.push({ kind: "photos", photos: [photo] });
+    } else {
+      if (last?.kind === "text") last.blocks.push(block);
+      else nodes.push({ kind: "text", blocks: [block] });
+    }
+  }
+
+  return (
+    <>
+      {nodes.map((node, i) =>
+        node.kind === "photos" ? (
+          <PostGallery key={i} photos={node.photos} />
+        ) : (
+          <div key={i} dangerouslySetInnerHTML={{ __html: renderText(node.blocks) }} />
+        )
+      )}
+    </>
+  );
+}
+
+function renderText(blocks: string[]): string {
+  return blocks
+    .map((block) =>
+      block
+        .replace(/^---$/gm, '<hr class="my-8 border-sage/30" />')
+        .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-forest mt-10 mb-4">$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3 class="text-xl font-bold text-forest mt-8 mb-3">$1</h3>')
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.+?)\*/g, "<em>$1</em>")
+        .replace(
+          /\[(.+?)\]\((.+?)\)/g,
+          '<a href="$2" class="text-clay hover:text-clay-light underline underline-offset-2 transition-colors">$1</a>'
+        )
+    )
+    .map((block) =>
+      block.startsWith("<h") || block.startsWith("<hr") || block.startsWith("<ul") || block.startsWith("<ol")
+        ? block
+        : `<p class="mb-6 text-bark-light leading-relaxed">${block}</p>`
+    )
+    .join("\n");
 }
