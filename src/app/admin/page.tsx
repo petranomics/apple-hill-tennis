@@ -67,19 +67,39 @@ interface ContentData {
 
 /* ──────────────────── Password Gate ──────────────────── */
 
-const ADMIN_PASS = "applehill2026";
+// The password lives in the ADMIN_PASSWORD env var and is verified server-side.
+// It is held in sessionStorage only so admin requests can carry it as a header.
+const PW_KEY = "ahtc-admin-pw";
+
+export const getAdminPassword = () => sessionStorage.getItem(PW_KEY) ?? "";
+
+const adminHeaders = (extra: Record<string, string> = {}) => ({
+  ...extra,
+  "x-admin-password": getAdminPassword(),
+});
 
 function PasswordGate({ onAuth }: { onAuth: () => void }) {
   const [pw, setPw] = useState("");
   const [error, setError] = useState(false);
+  const [checking, setChecking] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === ADMIN_PASS) {
-      sessionStorage.setItem("ahtc-admin", "1");
+    setChecking(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: pw }),
+      });
+      if (!res.ok) throw new Error("bad password");
+      sessionStorage.setItem(PW_KEY, pw);
       onAuth();
-    } else {
+    } catch {
       setError(true);
+    } finally {
+      setChecking(false);
     }
   };
 
@@ -149,7 +169,11 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
     const form = new FormData();
     form.append("file", file);
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: adminHeaders(),
+        body: form,
+      });
       const data = await res.json();
       if (data.url) onChange(data.url);
     } catch (e) {
@@ -175,7 +199,7 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
     setShowLibrary(true);
     setLoadingLib(true);
     try {
-      const res = await fetch("/api/upload");
+      const res = await fetch("/api/upload", { headers: adminHeaders() });
       const data = await res.json();
       setLibrary(data.images || []);
     } catch {
@@ -600,9 +624,10 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (sessionStorage.getItem("ahtc-admin") === "1") setAuthed(true);
+    if (getAdminPassword()) setAuthed(true);
   }, []);
 
   useEffect(() => {
@@ -615,14 +640,24 @@ export default function AdminPage() {
   const save = useCallback(async () => {
     if (!content) return;
     setSaving(true);
-    await fetch("/api/content", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(content),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setSaveError(null);
+    try {
+      const res = await fetch("/api/content", {
+        method: "PUT",
+        headers: adminHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify(content),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error || `Save failed (${res.status})`);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
   }, [content]);
 
   if (!authed) return <PasswordGate onAuth={() => setAuthed(true)} />;
@@ -654,6 +689,11 @@ export default function AdminPage() {
         <div className="flex items-center gap-4">
           {saved && (
             <span className="text-sage-light text-sm font-medium animate-pulse">Saved!</span>
+          )}
+          {saveError && (
+            <span className="bg-red-600 text-white text-sm font-medium px-3 py-1 rounded-md">
+              {saveError}
+            </span>
           )}
           <button
             onClick={save}

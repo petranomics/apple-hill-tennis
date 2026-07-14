@@ -115,9 +115,9 @@
       "text": "For membership inquiries and payment options, please contact us.",
       "contacts": [
         {
-          "name": "Gwynne Fitzgerald",
+          "name": "Apple Hill Tennis Club",
           "role": "Membership",
-          "email": "gwynne_e@yahoo.com"
+          "email": "applehilltennisclub@gmail.com"
         }
       ]
     }
@@ -139,7 +139,7 @@
     ]
   },
   "footer": {
-    "email": "gwynne_e@yahoo.com",
+    "email": "applehilltennisclub@gmail.com",
     "location": "West Dover, Vermont",
     "tagline": "A member-run club of tennis lovers in the Green Mountains."
   }

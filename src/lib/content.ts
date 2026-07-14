@@ -81,20 +81,22 @@ export async function getContent(): Promise<ContentData> {
 export async function saveContent(data: ContentData): Promise<void> {
   const json = JSON.stringify(data, null, 2);
 
-  // Save to Vercel Blob in production
   if (process.env.BLOB_READ_WRITE_TOKEN) {
+    // Blob is the source of truth wherever it is configured. Let failures throw.
     await put(BLOB_NAME, json, {
       access: "public",
       contentType: "application/json",
       addRandomSuffix: false,
+      // Saves overwrite the single content.json blob in place; without this the
+      // Blob SDK rejects every write after the first one.
+      allowOverwrite: true,
     });
+    return;
   }
 
-  // Also write local file (works in dev, no-op fail in production is fine)
-  try {
-    const { writeFile } = await import("fs/promises");
-    await writeFile(LOCAL_PATH, json, "utf-8");
-  } catch {
-    // Expected to fail in production serverless
-  }
+  // No Blob configured: only a writable local filesystem can persist. That is
+  // true in dev and false on serverless, where silently doing nothing here
+  // would report a successful save that never happened.
+  const { writeFile } = await import("fs/promises");
+  await writeFile(LOCAL_PATH, json, "utf-8");
 }

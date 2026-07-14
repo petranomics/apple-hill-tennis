@@ -1,7 +1,13 @@
 import { put, list, del } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
+import { isAuthed } from "@/lib/auth";
+
+const unauthorized = () =>
+  NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
 export async function POST(req: NextRequest) {
+  if (!isAuthed(req)) return unauthorized();
+
   const form = await req.formData();
   const file = form.get("file") as File | null;
 
@@ -17,7 +23,9 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ url: blob.url });
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!isAuthed(req)) return unauthorized();
+
   const { blobs } = await list({ prefix: "images/" });
 
   const images = blobs.map((b) => ({
@@ -31,6 +39,8 @@ export async function GET() {
 }
 
 export async function DELETE(req: NextRequest) {
+  if (!isAuthed(req)) return unauthorized();
+
   const { url } = await req.json();
 
   if (!url) {
