@@ -159,9 +159,176 @@ function TextArea({ value, onChange, rows = 4 }: { value: string; onChange: (v: 
 }
 
 /**
+ * Multi-photo picker: upload a batch of files at once (file dialog or drag), or
+ * tick several images in the library. Hands back every chosen URL in one go.
+ */
+function MultiPhotoPicker({ onPick }: { onPick: (urls: string[]) => void }) {
+  const [dragOver, setDragOver] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [library, setLibrary] = useState<{ url: string; pathname: string }[]>([]);
+  const [loadingLib, setLoadingLib] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const uploadMany = async (files: File[]) => {
+    const images = files.filter((f) => f.type.startsWith("image/"));
+    if (!images.length) return;
+
+    setError(null);
+    setProgress({ done: 0, total: images.length });
+    const urls: string[] = [];
+    const failed: string[] = [];
+
+    // Sequential so the order the user picked is the order they land in the post.
+    for (const file of images) {
+      try {
+        const blob = await clientUpload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/blob-upload",
+          clientPayload: getAdminPassword(),
+          multipart: true,
+        });
+        urls.push(blob.url);
+      } catch (e) {
+        failed.push(`${file.name}: ${e instanceof Error ? e.message : "failed"}`);
+      }
+      setProgress((p) => (p ? { ...p, done: p.done + 1 } : null));
+    }
+
+    setProgress(null);
+    if (failed.length) setError(failed.join(" · "));
+    if (urls.length) onPick(urls);
+  };
+
+  const openLibrary = async () => {
+    setShowLibrary(true);
+    setSelected([]);
+    setLoadingLib(true);
+    try {
+      const res = await fetch("/api/upload", { headers: adminHeaders() });
+      const data = await res.json();
+      setLibrary(data.images || []);
+    } catch {
+      setLibrary([]);
+    }
+    setLoadingLib(false);
+  };
+
+  const toggle = (url: string) =>
+    setSelected((s) => (s.includes(url) ? s.filter((u) => u !== url) : [...s, url]));
+
+  return (
+    <div className="space-y-2">
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          uploadMany([...e.dataTransfer.files]);
+        }}
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          dragOver ? "border-forest bg-forest/5" : "border-sage/30 hover:border-sage/50"
+        }`}
+      >
+        {progress ? (
+          <p className="text-sm text-bark-light animate-pulse">
+            Uploading {progress.done + 1} of {progress.total}...
+          </p>
+        ) : (
+          <>
+            <p className="text-sm text-bark-light mb-2">
+              Drag & drop photos here — you can drop several at once
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <label className="cursor-pointer bg-forest hover:bg-forest-light text-white text-xs font-semibold px-4 py-2 rounded-md transition-colors">
+                Choose Files
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => {
+                    uploadMany([...(e.target.files || [])]);
+                    e.target.value = "";
+                  }}
+                  className="hidden"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={openLibrary}
+                className="text-xs font-semibold text-forest border border-forest/30 hover:bg-forest/5 px-4 py-2 rounded-md transition-colors"
+              >
+                Image Library
+              </button>
+            </div>
+          </>
+        )}
+        {error && <p className="text-xs text-red-600 mt-3">Upload failed — {error}</p>}
+      </div>
+
+      {showLibrary && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40" onClick={() => setShowLibrary(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-sage/20">
+              <h3 className="text-lg font-bold text-forest">
+                Image Library <span className="font-normal text-sm text-bark-light">— tap to select several</span>
+              </h3>
+              <button onClick={() => setShowLibrary(false)} className="text-bark-light hover:text-bark text-xl">&times;</button>
+            </div>
+            <div className="p-5 overflow-y-auto flex-1">
+              {loadingLib ? (
+                <p className="text-center text-bark-light animate-pulse py-8">Loading images...</p>
+              ) : library.length === 0 ? (
+                <p className="text-center text-bark-light py-8">No uploaded images yet.</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-3">
+                  {library.map((img) => {
+                    const i = selected.indexOf(img.url);
+                    return (
+                      <button
+                        key={img.url}
+                        onClick={() => toggle(img.url)}
+                        className={`relative rounded-lg overflow-hidden border-2 transition-colors ${
+                          i >= 0 ? "border-forest" : "border-transparent hover:border-sage"
+                        }`}
+                      >
+                        <img src={img.url} alt={img.pathname} className="w-full h-28 object-cover" />
+                        {i >= 0 && (
+                          <span className="absolute top-1 right-1 bg-forest text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                            {i + 1}
+                          </span>
+                        )}
+                        <p className="text-[10px] text-bark-light p-1 truncate">{img.pathname.replace("images/", "")}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="flex items-center justify-between p-4 border-t border-sage/20 bg-cream/50">
+              <p className="text-sm text-bark-light">{selected.length} selected</p>
+              <button
+                type="button"
+                disabled={!selected.length}
+                onClick={() => { onPick(selected); setShowLibrary(false); }}
+                className="bg-forest hover:bg-forest-light disabled:opacity-40 text-white px-5 py-2 rounded-md text-sm font-semibold transition-colors"
+              >
+                Insert {selected.length || ""} {selected.length === 1 ? "photo" : "photos"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * Post body editor. Photos live inline in the markdown as ![caption](url), so a
  * post can hold as many as it likes, each placed next to the text it belongs to.
- * The button inserts at the cursor rather than appending, so photos land where
+ * Insertion happens at the cursor rather than at the end, so photos land where
  * the writer is actually typing.
  */
 function PostContentEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -171,10 +338,12 @@ function PostContentEditor({ value, onChange }: { value: string; onChange: (v: s
 
   const photoCount = (value.match(/!\[.*?\]\(.+?\)/g) || []).length;
 
-  const insertPhoto = (url: string) => {
-    if (!url) return;
-    const cap = caption.trim();
-    const snippet = `\n\n![${cap}](${url})\n\n`;
+  const insertPhotos = (urls: string[]) => {
+    if (!urls.length) return;
+    // A single photo can carry the caption typed above; a batch gets empty
+    // captions, which the writer fills in inside the brackets afterwards.
+    const cap = urls.length === 1 ? caption.trim() : "";
+    const snippet = "\n\n" + urls.map((u) => `![${cap}](${u})`).join("\n\n") + "\n\n";
 
     const el = ref.current;
     // Fall back to appending if the textarea has never been focused.
@@ -185,7 +354,7 @@ function PostContentEditor({ value, onChange }: { value: string; onChange: (v: s
     setCaption("");
     setInserting(false);
 
-    // Put the cursor after the inserted photo so typing continues below it.
+    // Put the cursor after the inserted photos so typing continues below them.
     requestAnimationFrame(() => {
       if (!el) return;
       const pos = at + snippet.length;
@@ -207,19 +376,19 @@ function PostContentEditor({ value, onChange }: { value: string; onChange: (v: s
           onClick={() => setInserting((v) => !v)}
           className="text-xs font-semibold text-forest border border-forest/30 hover:bg-forest/5 px-3 py-1.5 rounded-md transition-colors"
         >
-          {inserting ? "Cancel" : "+ Insert Photo"}
+          {inserting ? "Cancel" : "+ Insert Photos"}
         </button>
       </div>
 
       {inserting && (
         <div className="border border-forest/20 bg-forest/5 rounded-lg p-4 space-y-3">
           <p className="text-xs text-bark-light">
-            The photo is inserted where your cursor is in the text below.
+            Photos are inserted where your cursor is in the text below. Pick as many as you like.
           </p>
-          <Field label="Caption (optional)">
+          <Field label="Caption (used when you insert a single photo)">
             <TextInput value={caption} onChange={setCaption} />
           </Field>
-          <ImageField value="" onChange={insertPhoto} />
+          <MultiPhotoPicker onPick={insertPhotos} />
         </div>
       )}
 
