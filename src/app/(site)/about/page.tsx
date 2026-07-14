@@ -37,9 +37,9 @@ export default async function AboutPage() {
             </div>
             <div className="bg-sage/20 rounded-2xl p-2">
               <img
-                src="/images/apple-hill-sign.jpg"
-                alt="Apple Hill painted sign"
-                className="rounded-xl w-full h-72 md:h-96 object-cover"
+                src="/images/apple-hill-sign-full.jpg"
+                alt="The hand-painted Apple Hill sign on the barn"
+                className="rounded-xl w-full h-auto"
               />
             </div>
           </div>
