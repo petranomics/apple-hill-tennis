@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { upload as clientUpload } from "@vercel/blob/client";
 
 /* ──────────────────── Types ──────────────────── */
 
@@ -239,21 +240,24 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
   const [showLibrary, setShowLibrary] = useState(false);
   const [library, setLibrary] = useState<{ url: string; pathname: string }[]>([]);
   const [loadingLib, setLoadingLib] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const upload = async (file: File) => {
     setUploading(true);
-    const form = new FormData();
-    form.append("file", file);
+    setUploadError(null);
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: adminHeaders(),
-        body: form,
+      // Straight from the browser to Blob storage. Routing the bytes through our
+      // own API would cap uploads at 4.5MB (Vercel's function body limit), which
+      // rejects most photos taken on a phone.
+      const blob = await clientUpload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/blob-upload",
+        clientPayload: getAdminPassword(),
+        multipart: true,
       });
-      const data = await res.json();
-      if (data.url) onChange(data.url);
+      onChange(blob.url);
     } catch (e) {
-      console.error("Upload failed", e);
+      setUploadError(e instanceof Error ? e.message : "Upload failed");
     }
     setUploading(false);
   };
@@ -329,6 +333,19 @@ function ImageField({ value, onChange }: { value: string; onChange: (v: string) 
       >
         {uploading ? (
           <p className="text-sm text-bark-light animate-pulse">Uploading...</p>
+        ) : uploadError ? (
+          <>
+            <p className="text-sm text-red-600 font-medium mb-2">
+              Upload failed: {uploadError}
+            </p>
+            <button
+              type="button"
+              onClick={() => setUploadError(null)}
+              className="text-xs font-semibold text-forest border border-forest/30 hover:bg-forest/5 px-4 py-2 rounded-md transition-colors"
+            >
+              Try again
+            </button>
+          </>
         ) : (
           <>
             <svg className="w-8 h-8 text-sage mx-auto mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">

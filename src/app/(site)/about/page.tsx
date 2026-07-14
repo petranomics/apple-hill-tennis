@@ -52,9 +52,9 @@ export default async function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1 bg-sage/20 rounded-2xl p-2">
               <img
-                src="/images/apple-hill-courts.png"
-                alt="Apple Hill Tennis Club courts"
-                className="rounded-xl w-full h-72 md:h-96 object-cover"
+                src="/images/apple-hill-play.jpg"
+                alt="Members playing on the red clay courts at Apple Hill"
+                className="rounded-xl w-full h-auto"
               />
             </div>
             <div className="order-1 md:order-2">
