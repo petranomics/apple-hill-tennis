@@ -7,8 +7,12 @@
   --color-sage-light: #a8c490;
   --color-cream: #faf8f0;
   --color-cream-dark: #f0ede0;
-  --color-clay: #c4703e;
-  --color-clay-light: #d4915e;
+  /* Clay carries white button text and acts as link text, so it has to clear
+     4.5:1 against both white and cream (WCAG AA). The old #c4703e was 3.66:1
+     and failed both. Hover darkens rather than lightens, for the same reason. */
+  --color-clay: #a85529;
+  --color-clay-hover: #8c421f;
+  --color-clay-light: #d4915e; /* decorative only — never behind or as text */
   --color-bark: #5c4033;
   --color-bark-light: #7a5a4a;
   --color-mountain: #4a6741;

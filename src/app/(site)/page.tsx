@@ -70,7 +70,7 @@ export default async function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/membership"
-              className="bg-clay hover:bg-clay-light text-white px-8 py-3 rounded-md font-semibold transition-colors"
+              className="bg-clay hover:bg-clay-hover text-white px-8 py-3 rounded-md font-semibold transition-colors"
             >
               Become a Member
             </Link>
@@ -145,12 +145,14 @@ export default async function Home() {
       <section className="py-16 md:py-24 bg-mountain text-white text-center">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Play?</h2>
-          <p className="text-lg text-sage-light mb-8">
+          {/* cream, not sage-light: on the lighter mountain green, sage-light is
+              only 3.31:1 and fails AA. */}
+          <p className="text-lg text-cream mb-8">
             Join our welcoming community of tennis lovers in the beautiful Green Mountains.
           </p>
           <Link
             href="/membership"
-            className="inline-block bg-clay hover:bg-clay-light text-white px-10 py-4 rounded-md font-semibold text-lg transition-colors"
+            className="inline-block bg-clay hover:bg-clay-hover text-white px-10 py-4 rounded-md font-semibold text-lg transition-colors"
           >
             View Membership Options
           </Link>

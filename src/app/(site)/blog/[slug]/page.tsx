@@ -79,7 +79,7 @@ export default async function BlogPostPage({ params }: Props) {
       <article className="py-12 md:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="prose prose-lg max-w-none text-bark leading-relaxed blog-content">
-            <MarkdownContent content={post.content} />
+            <MarkdownContent content={post.content} postTitle={post.title} />
           </div>
 
           {/* Tags */}
@@ -120,7 +120,7 @@ const IMAGE_BLOCK = /^!\[(.*?)\]\((.+?)\)$/;
  * gallery component; a run of consecutive photos becomes one gallery rather than
  * a stack of full-width images, which is how club photo posts actually read.
  */
-function MarkdownContent({ content: md }: { content: string }) {
+function MarkdownContent({ content: md, postTitle }: { content: string; postTitle?: string }) {
   const blocks = md.split(/\n\n+/).map((b) => b.trim()).filter(Boolean);
 
   // Group the blocks into text runs and photo runs, preserving order.
@@ -144,7 +144,7 @@ function MarkdownContent({ content: md }: { content: string }) {
     <>
       {nodes.map((node, i) =>
         node.kind === "photos" ? (
-          <PostGallery key={i} photos={node.photos} />
+          <PostGallery key={i} photos={node.photos} postTitle={postTitle} />
         ) : (
           <div key={i} dangerouslySetInnerHTML={{ __html: renderText(node.blocks) }} />
         )
@@ -164,7 +164,7 @@ function renderText(blocks: string[]): string {
         .replace(/\*(.+?)\*/g, "<em>$1</em>")
         .replace(
           /\[(.+?)\]\((.+?)\)/g,
-          '<a href="$2" class="text-clay hover:text-clay-light underline underline-offset-2 transition-colors">$1</a>'
+          '<a href="$2" class="text-clay hover:text-clay-hover underline underline-offset-2 transition-colors">$1</a>'
         )
     )
     .map((block) =>

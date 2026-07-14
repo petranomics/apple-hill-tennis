@@ -33,6 +33,9 @@ export default async function MembershipPage() {
       {/* Pricing Cards */}
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h2 className="text-3xl font-bold text-forest text-center mb-12">
+            Membership Plans
+          </h2>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {membership.plans.map((plan, i) => (
               <div
@@ -99,7 +102,7 @@ export default async function MembershipPage() {
                   href="#contact"
                   className={`block text-center py-3 rounded-md font-semibold transition-colors ${
                     plan.popular
-                      ? "bg-clay hover:bg-clay-light text-white"
+                      ? "bg-clay hover:bg-clay-hover text-white"
                       : "bg-forest hover:bg-forest-light text-white"
                   }`}
                 >
@@ -133,7 +136,7 @@ export default async function MembershipPage() {
                 <p className="text-sm text-bark-light mb-2">{person.role}</p>
                 <a
                   href={`mailto:${person.email}`}
-                  className="text-clay hover:text-clay-light transition-colors font-medium"
+                  className="text-clay hover:text-clay-hover transition-colors font-medium"
                 >
                   {person.email}
                 </a>

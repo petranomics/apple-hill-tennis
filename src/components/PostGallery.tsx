@@ -9,8 +9,22 @@ export type GalleryPhoto = { url: string; caption: string };
  * round robin, an opening day — so consecutive photos are laid out as a gallery
  * instead of a full-width stack, and tapping one opens it full size.
  */
-export default function PostGallery({ photos }: { photos: GalleryPhoto[] }) {
+export default function PostGallery({
+  photos,
+  postTitle,
+}: {
+  photos: GalleryPhoto[];
+  postTitle?: string;
+}) {
   const [open, setOpen] = useState<number | null>(null);
+
+  // A photo with no caption would otherwise carry an empty alt, which tells a
+  // screen reader nothing. Fall back to naming the post it came from.
+  const describe = (photo: GalleryPhoto, i: number) =>
+    photo.caption ||
+    (postTitle
+      ? `Photo ${i + 1} of ${photos.length} from ${postTitle}`
+      : `Photo ${i + 1} of ${photos.length}`);
 
   const close = useCallback(() => setOpen(null), []);
   const step = useCallback(
@@ -52,12 +66,12 @@ export default function PostGallery({ photos }: { photos: GalleryPhoto[] }) {
             <button
               type="button"
               onClick={() => setOpen(i)}
-              aria-label={photo.caption || "View photo full size"}
+              aria-label={`View full size: ${describe(photo, i)}`}
               className="group block w-full cursor-zoom-in overflow-hidden rounded-xl bg-sage/10"
             >
               <img
                 src={photo.url}
-                alt={photo.caption}
+                alt={describe(photo, i)}
                 loading="lazy"
                 className={
                   single
@@ -116,7 +130,7 @@ export default function PostGallery({ photos }: { photos: GalleryPhoto[] }) {
           <figure className="max-h-full" onClick={(e) => e.stopPropagation()}>
             <img
               src={photos[open].url}
-              alt={photos[open].caption}
+              alt={describe(photos[open], open)}
               className="max-h-[82vh] max-w-full rounded-lg object-contain"
             />
             <figcaption className="mt-4 text-center text-sm text-white/80">

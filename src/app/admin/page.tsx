@@ -962,7 +962,7 @@ export default function AdminPage() {
           <button
             onClick={save}
             disabled={saving}
-            className="bg-clay hover:bg-clay-light disabled:opacity-50 text-white px-5 py-2 rounded-md text-sm font-semibold transition-colors"
+            className="bg-clay hover:bg-clay-hover disabled:opacity-50 text-white px-5 py-2 rounded-md text-sm font-semibold transition-colors"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
