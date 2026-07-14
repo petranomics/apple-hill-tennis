@@ -28,7 +28,7 @@ export default async function Footer() {
           <p>
             Built by{" "}
             <a
-              href="https://polarispoint.com"
+              href="https://polarispoint.io"
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-2 hover:text-white transition-colors"
