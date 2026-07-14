@@ -118,6 +118,15 @@ function MarkdownContent({ content: md }: { content: string }) {
       /^### (.+)$/gm,
       '<h3 class="text-xl font-bold text-forest mt-8 mb-3">$1</h3>'
     )
+    // Images must be handled before links, or the link rule consumes ![...](...)
+    .replace(/!\[(.*?)\]\((.+?)\)/g, (_m, caption: string, url: string) => {
+      const cap = caption.trim();
+      return `<figure class="my-10"><img src="${url}" alt="${cap}" loading="lazy" class="rounded-xl w-full h-auto shadow-sm" />${
+        cap
+          ? `<figcaption class="mt-3 text-center text-sm text-bark-light italic">${cap}</figcaption>`
+          : ""
+      }</figure>`;
+    })
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
     .replace(
@@ -130,7 +139,8 @@ function MarkdownContent({ content: md }: { content: string }) {
         block.startsWith("<h") ||
         block.startsWith("<hr") ||
         block.startsWith("<ul") ||
-        block.startsWith("<ol")
+        block.startsWith("<ol") ||
+        block.startsWith("<figure")
       )
         return block;
       return `<p class="mb-6 text-bark-light leading-relaxed">${block}</p>`;

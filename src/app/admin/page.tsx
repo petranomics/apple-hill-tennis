@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 /* ──────────────────── Types ──────────────────── */
 
@@ -154,6 +154,82 @@ function TextArea({ value, onChange, rows = 4 }: { value: string; onChange: (v: 
       rows={rows}
       className="w-full border border-sage/30 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-forest/30 resize-y"
     />
+  );
+}
+
+/**
+ * Post body editor. Photos live inline in the markdown as ![caption](url), so a
+ * post can hold as many as it likes, each placed next to the text it belongs to.
+ * The button inserts at the cursor rather than appending, so photos land where
+ * the writer is actually typing.
+ */
+function PostContentEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const [inserting, setInserting] = useState(false);
+  const [caption, setCaption] = useState("");
+
+  const photoCount = (value.match(/!\[.*?\]\(.+?\)/g) || []).length;
+
+  const insertPhoto = (url: string) => {
+    if (!url) return;
+    const cap = caption.trim();
+    const snippet = `\n\n![${cap}](${url})\n\n`;
+
+    const el = ref.current;
+    // Fall back to appending if the textarea has never been focused.
+    const at = el ? el.selectionStart : value.length;
+    const next = value.slice(0, at) + snippet + value.slice(at);
+
+    onChange(next);
+    setCaption("");
+    setInserting(false);
+
+    // Put the cursor after the inserted photo so typing continues below it.
+    requestAnimationFrame(() => {
+      if (!el) return;
+      const pos = at + snippet.length;
+      el.focus();
+      el.setSelectionRange(pos, pos);
+    });
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-bark-light">
+          {photoCount === 0
+            ? "No photos in this post yet."
+            : `${photoCount} photo${photoCount === 1 ? "" : "s"} in this post.`}
+        </p>
+        <button
+          type="button"
+          onClick={() => setInserting((v) => !v)}
+          className="text-xs font-semibold text-forest border border-forest/30 hover:bg-forest/5 px-3 py-1.5 rounded-md transition-colors"
+        >
+          {inserting ? "Cancel" : "+ Insert Photo"}
+        </button>
+      </div>
+
+      {inserting && (
+        <div className="border border-forest/20 bg-forest/5 rounded-lg p-4 space-y-3">
+          <p className="text-xs text-bark-light">
+            The photo is inserted where your cursor is in the text below.
+          </p>
+          <Field label="Caption (optional)">
+            <TextInput value={caption} onChange={setCaption} />
+          </Field>
+          <ImageField value="" onChange={insertPhoto} />
+        </div>
+      )}
+
+      <textarea
+        ref={ref}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={18}
+        className="w-full border border-sage/30 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-forest/30 resize-y font-mono"
+      />
+    </div>
   );
 }
 
@@ -585,9 +661,11 @@ function BlogEditor({ data, set }: { data: ContentData["blog"]; set: (d: Content
                   />
                 </Field>
               </div>
-              <Field label="Featured Image"><ImageField value={post.image} onChange={(v) => updatePost(i, { ...post, image: v })} /></Field>
-              <Field label="Content (Markdown)">
-                <TextArea value={post.content} onChange={(v) => updatePost(i, { ...post, content: v })} rows={16} />
+              <Field label="Featured Image (hero + blog list thumbnail)">
+                <ImageField value={post.image} onChange={(v) => updatePost(i, { ...post, image: v })} />
+              </Field>
+              <Field label="Content (Markdown) — photos can be inserted anywhere in the text">
+                <PostContentEditor value={post.content} onChange={(v) => updatePost(i, { ...post, content: v })} />
               </Field>
               <div className="flex justify-end">
                 <button
