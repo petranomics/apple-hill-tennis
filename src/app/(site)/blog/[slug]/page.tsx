@@ -40,15 +40,16 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative bg-forest text-white overflow-hidden">
-        {post.image && (
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: `url('${post.image}')` }}
-          />
-        )}
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-20 md:py-28 text-center">
+      {/* Hero: a title band, with the cover photo shown whole just below it.
+          The cover used to be a dimmed, cropped background behind the title.
+          Club covers are mostly group shots, and that crop kept cutting people
+          out, so the photo is now a framed print that overlaps the band. */}
+      <section className="bg-forest text-white">
+        <div
+          className={`max-w-4xl mx-auto px-4 sm:px-6 text-center ${
+            post.image ? "pt-16 md:pt-20 pb-28 md:pb-36" : "py-20 md:py-28"
+          }`}
+        >
           <div className="flex items-center justify-center gap-3 text-sm text-sage-light mb-4">
             <time dateTime={post.date}>
               {new Date(post.date + "T00:00:00").toLocaleDateString("en-US", {
@@ -75,8 +76,21 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </section>
 
+      {post.image && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-20 md:-mt-28">
+          <figure className="m-0 bg-white rounded-2xl p-2 shadow-xl">
+            {/* w-full h-auto: the whole photo, whatever its shape. Never cropped. */}
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-auto rounded-xl"
+            />
+          </figure>
+        </div>
+      )}
+
       {/* Article body */}
-      <article className="py-12 md:py-20">
+      <article className={post.image ? "py-10 md:py-16" : "py-12 md:py-20"}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="prose prose-lg max-w-none text-bark leading-relaxed blog-content">
             <MarkdownContent content={post.content} postTitle={post.title} />

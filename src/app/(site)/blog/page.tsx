@@ -51,10 +51,12 @@ export default async function BlogPage() {
               >
                 <Link href={`/blog/${post.slug}`} className="block">
                   {post.image && (
+                    // Shown whole on a soft tinted band rather than cropped to a
+                    // banner: covers are group shots and a crop cuts people out.
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="w-full h-56 md:h-72 object-cover"
+                      className="w-full max-h-[28rem] md:max-h-[32rem] object-contain bg-sage/10"
                     />
                   )}
                   <div className="p-6 md:p-8">
