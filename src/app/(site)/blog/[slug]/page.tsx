@@ -77,13 +77,15 @@ export default async function BlogPostPage({ params }: Props) {
       </section>
 
       {post.image && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-20 md:-mt-28">
-          <figure className="m-0 bg-white rounded-2xl p-2 shadow-xl">
-            {/* w-full h-auto: the whole photo, whatever its shape. Never cropped. */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-20 md:-mt-28 flex justify-center">
+          {/* The frame shrinks to the photo. A landscape shot fills the column;
+              a portrait shot is capped at 80% of the screen height and centred,
+              so it never towers over the page. Either way the whole photo shows. */}
+          <figure className="m-0 inline-block bg-white rounded-2xl p-2 shadow-xl">
             <img
               src={post.image}
               alt={post.title}
-              className="w-full h-auto rounded-xl"
+              className="block max-h-[80vh] w-auto max-w-full rounded-xl"
             />
           </figure>
         </div>
