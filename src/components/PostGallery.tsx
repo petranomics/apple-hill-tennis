@@ -78,9 +78,11 @@ export default function PostGallery({
                     ? // A single photo is shown whole, but capped so a tall phone
                       // photo can't swallow the entire screen.
                       "mx-auto max-h-[70vh] w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-[1.01]"
-                    : // In a grid, crop to a consistent shape so mixed portrait and
-                      // landscape shots line up instead of stair-stepping.
-                      "h-64 md:h-80 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    : // In a grid, every tile is the same height so mixed portrait and
+                      // landscape shots line up, but the photo is fitted inside the
+                      // tile rather than cropped: a group shot must never lose a face
+                      // at the edge. The tinted tile background fills any gap.
+                      "h-64 md:h-80 w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 }
               />
             </button>
